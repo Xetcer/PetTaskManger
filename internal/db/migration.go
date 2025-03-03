@@ -3,6 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
+
+	_ "github.com/lib/pq" // Импортируем драйвер PostgreSQL
 )
 
 // createDB созадем нужную БД, вернем ее или ошибку
@@ -28,8 +30,37 @@ func createUsersTab(db *sql.DB) (sql.Result, error) {
 	return db.Exec(str)
 }
 
+// createTypes создаем свои типы для таблицы tasks
+func createTypes(db *sql.DB) (sql.Result, error) {
+	queryStr := `CREATE TYPE task_status AS ENUM('in progress', 'completed');`
+	result, err := db.Exec(queryStr)
+	if err != nil {
+		return result, err
+	}
+	queryStr = `CREATE TYPE task_priority  AS ENUM('no matter', 'normal', 'important');`
+	result, err = db.Exec(queryStr)
+	if err != nil {
+		return result, err
+	}
+	return result, err
+}
+
+// dropTypes удаляет типы для таблицы tasks
+func dropTypes(db *sql.DB) (sql.Result, error) {
+	queryStr := `DROP TYPE task_status;`
+	result, err := db.Exec(queryStr)
+	queryStr = `DROP TYPE task_priority;`
+	result, err = db.Exec(queryStr)
+	return result, err
+}
+
 // creteTasksTab создаем таблицу задач
 func creteTasksTab(db *sql.DB) (sql.Result, error) {
+	result, err := createTypes(db)
+	if err != nil {
+		return result, err
+	}
+
 	str := `CREATE TABLE IF NOT EXISTS tasks (
     id SERIAL PRIMARY KEY, --Уникальный идентификатор задачи, автоинкремент.
     title VARCHAR(255) NOT NULL, --Заголовок задачи. Ограничение по длине 255 символов.
