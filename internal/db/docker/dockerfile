@@ -1,0 +1,8 @@
+# Базовый слой за основу берем postgres версии  17
+FROM postgres:17
+
+# Устанавливаем переменные среды для БД
+ENV POSTGRES_DB=tasks_db
+
+# Обновляем список зависимостей и очищаем кэш apt
+RUN apt-get -y update && apt-get clean
