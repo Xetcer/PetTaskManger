@@ -1,15 +1,15 @@
 @echo off
 setlocal
-cd /d "%~dp0"
+::cd /d "%~dp0"
 
 :: Параметры
 set DOCKER_IMAGE_NAME=my_psql:1
 set CONTAINER_NAME=psql-container
-:: хранилище всегда указывать абсолютный путь!
-set VOLUME_NAME=E:\myWork\Study\GoLang\go\src\pettaskmngr\tmp\psql\pgdata 
+:: хранилище всегда указывать абсолютный путь в конце не должно быть пробелов!!!
+set VOLUME_NAME=E:\myWork\Study\GoLang\go\src\pettaskmngr\tmp\psql\pgdata
 set PORT_BINDING=5432:5432
-:: тут нужно указывать относительный путь!
-set ENV_FILE=..\..\..\.env
+:: тут можно указывать относительный путь!
+set ENV_FILE=E:\myWork\Study\GoLang\go\src\pettaskmngr\dbconfig.env
 
 :: Отладочные сообщения
 echo CD: %cd%
@@ -43,7 +43,7 @@ echo Creating and starting container...
 
 :: Start the container and output any error directly to the console
 docker run -v "%VOLUME_NAME%:/var/lib/postgresql/data" -p %PORT_BINDING% --name %CONTAINER_NAME% --env-file "%ENV_FILE%" -d %DOCKER_IMAGE_NAME%
-
+echo docker run -v "%VOLUME_NAME%:/var/lib/postgresql/data" -p %PORT_BINDING% --name %CONTAINER_NAME% --env-file "%ENV_FILE%" -d %DOCKER_IMAGE_NAME%
 if %errorlevel% neq 0 (
     echo An error occurred while starting the container.
     echo Docker error output:
