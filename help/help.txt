@@ -5,6 +5,7 @@ Task Manager
 Цель создать pet проект, для отработки навыков по следующему стеку технологий: 
 1. GIT
 2. Go 
+3. GOOSE migration tool
 3. PSQL
 4. HTML/CSS/JS
 5. REST-API
@@ -81,3 +82,59 @@ CREATE TABLE IF NOT EXISTS user_tasks(
     task_id INT NOT NULL, --Идентификатор задачи  
     UNIQUE (user_id, task_id)
 );
+
+// Миграция БД
+Буду использовать https://github.com/pressly/goose
+Это утилита для миграции БД, она включает в себя и CLI и библеотеку.
+Ее особенности:
+1. Может работать с множеством БД
+2. Поддерживает миграции Go, написанные как простые функции
+3. Поддерживает встроенные миграции
+4. Миграции вне порядка
+5. Данные посещений
+6. Замена переменной среды при миграции SQL 
+и д.р.
+- Установка 
+go install github.com/pressly/goose/v3/cmd/goose@latest
+
+Общий формат команды goose [OPTIONS] COMMAND
+
+// Создание БД
+    Создание файла для описания миграции
+    1. goose -dir migrations create create_database sql 
+    2. Заполняем файл create_database командами:
+
+// Создание таблицы users
+    1. goose -dir migrations create create_users_table sql
+    2. Заполняем файл create_users_table командами:
+
+// Создаем тип status_type
+    1. goose -dir migrations create create_task_status_type sql
+    2. Заполняем файл create_task_status_type
+
+// Создаем тип task_priority
+    1. goose -dir migrations create create_task_priority_type sql
+    2. Заполняем файл create_task_priority_type командами:
+
+// Создаем таблицу tasks
+    1. goose -dir migrations create create_tasks_table sql
+    2. Заполняем файл create_tasks_table
+
+// Создаем таблицу user_tasks
+    1. goose -dir migrations create create_user_tasks_table sql
+    2. Заполняем файл create_user_tasks_table
+
+
+Разворачивание БД goose -dir ./migrations postgres postgres://postgres:5421@localhost:5432/taskdb up
+Если нормально прописан dbconf.enf: goose -env dbconf.env up
+
+// Docker
+1. Подтняуть образ последней версии psql для docker: docker pull postgres - не обязательно если есть докерфайл
+2. Сборка своего образа из dockerfile docker image build -t my_psql:1 .
+3. Запуск контейнера  docker container run --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=5421 --name my_psql my_psql:1 , где:
+     --rm автоматическески удаляет контейнер и его хранилища если они есть;
+     -d запустить контейнер в фоне и написать его ID 
+     -p 5432:5432 - прокинуть порт контейнера на хост машину.
+     -e POSTGRES_PASSWORD=5421 - задать переменную окружающей среды пароль для psql
+     --name my_psql название контейнера, my_psql:1 название образа
+
