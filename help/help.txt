@@ -126,7 +126,7 @@ go install github.com/pressly/goose/v3/cmd/goose@latest
 
 
 Разворачивание БД goose -dir ./migrations postgres postgres://postgres:5421@localhost:5432/taskdb up
-Если нормально прописан dbconf.enf: goose -env dbconf.env up
+Если нормально прописан goose.enf: goose -env goose.env up
 
 // Docker
 1. Подтняуть образ последней версии psql для docker: docker pull postgres - не обязательно если есть докерфайл
@@ -137,4 +137,10 @@ go install github.com/pressly/goose/v3/cmd/goose@latest
      -p 5432:5432 - прокинуть порт контейнера на хост машину.
      -e POSTGRES_PASSWORD=5421 - задать переменную окружающей среды пароль для psql
      --name my_psql название контейнера, my_psql:1 название образа
+4. Либо использовать скрипты из каталога docker 
+    - build_docker_image - построить образ по доверфайлу
+    - first_run_container - первый запуск контейнера
+    - restart_container - любой не первый запуск контейнера
+    - stop_container - остановка контейнера
+    - remove_container - удаление контейнера
 
