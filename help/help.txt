@@ -144,3 +144,32 @@ go install github.com/pressly/goose/v3/cmd/goose@latest
     - stop_container - остановка контейнера
     - remove_container - удаление контейнера
 
+// Разворачивание контейнера и БД первый размер
+1.Идем в каталог internal/db/docker
+2.Запустить build_docker_image
+3.Запустить first_run_container
+4.Запускаем CLI в каталоге internal/db/migrations
+5.Выполняем команду goose -env goose.env up
+Проверяем что в докере развернулась БД tasks_db с нашими таблицами для этого надо в CLI выполнить:
+1. docker exec -it psql-container psql -U postgresы
+2. \d - должны увидеть список всех БД если там есть tasks_db
+3. \c tasks_db - подключаемся к нашей БД
+4. \d - выведем список всех таблиц БД tasks_db, должны увидеть все наши таблицы
+
+// WSL
+1. Запуск wsl из powershel
+wsl --install  (почему-то через команду wsl не запускается как надо)
+2. Переход в директорию с проектом из под Ubuntu
+cd /mnt/e/myWork/Study/GoLang/go/src/pettaskmngr/
+
+// Makefile + windows
+https://victorz.ru/202402043262
+1. утилита make появилась изначально в unix системах
+2. Для того чтобы создавать makefile и использовать его в windows + VSCode нужно установить winget install GnuWin32.Make
+3. Запускаем powerShell из под админа и выполняем winget install GnuWin32.Make
+4. Прописываем путь C:\Program Files (x86)\GnuWin32\bin в переменные среды Path 
+5. в VSCode надо установить Makefile Tools
+6. Перезагрузить все открытые консольные окна, перезапустить VS completed
+7. Проверить что make работает make --version, должна появится актуальная версия.
+
+windows директории надо указывать  \ а не /, второй для linux 
