@@ -156,7 +156,7 @@ go install github.com/pressly/goose/v3/cmd/goose@latest
 3. \c tasks_db - подключаемся к нашей БД
 4. \d - выведем список всех таблиц БД tasks_db, должны увидеть все наши таблицы
 
-// WSL
+// WSL Windows Subsystem for Linux — это функция Windows, которая позволяет запускать среду Linux на компьютере Windows 
 1. Запуск wsl из powershel
 wsl --install  (почему-то через команду wsl не запускается как надо)
 2. Переход в директорию с проектом из под Ubuntu
