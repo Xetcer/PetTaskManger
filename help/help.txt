@@ -9,6 +9,7 @@ Task Manager
 3. PSQL
 4. HTML/CSS/JS
 5. REST-API
+6. Makefile
 
 Стадии: 
 1. Создание технического рисунка макета прокта
