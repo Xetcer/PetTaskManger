@@ -18,7 +18,7 @@ POSTGRES_PASSWORD ?=5421
 
 #Переменные goose
 GOOSE_DRIVER ?=postgres
-GOOSE_DBSTRING ?="user=postgres password=5421 dbname=tasks_db sslmode=disable"
+GOOSE_DBSTRING ?="user=postgres password=5421 dbname=tasks_db host=localhost port=5432 sslmode=disable"
 GOOSE_MIGRATION_DIR ?=internal/db/migrations
 
 #Переменные для docker
@@ -29,6 +29,11 @@ VOLUME_NAME := E:\myWork\Study\GoLang\go\src\pettaskmngr\tmp\psql\pgdata
 PORT_BINDING := 5432:5432
 ENV_FILE := dbconfig.env
 
+#Переменные для psql
+USER := postgres
+PASSWORD := 5421
+DB_NAME := tasks_db
+
 # 1. Создаем директорию temp/psql/pgdata для подключения volume docker
 temp: 
 	mkdir temp\psql\pgdata\
@@ -36,6 +41,14 @@ temp:
 # 2. установить GOOSE
 goose_install: 
 	go install github.com/pressly/goose/v3/cmd/goose@latest
+
+# Развернуть таблицы в БД
+goose_up:
+	goose -dir $(GOOSE_MIGRATION_DIR) $(GOOSE_DRIVER) $(GOOSE_DBSTRING) up
+
+#удалить таблицы в БД
+goose_down:
+	goose -dir $(GOOSE_MIGRATION_DIR) $(GOOSE_DRIVER) $(GOOSE_DBSTRING) down
 
 #docker команды
 #собрать образ по докерфайлу
@@ -99,3 +112,7 @@ docker_remove_container:
 	) else ( \
 		echo container $(CONTAINER_NAME) removed!\
 	)
+
+# Подключиться к psql в контейнере
+docker_connect_psql:
+	docker exec -it $(CONTAINER_NAME) psql -U $(USER) $(DB_NAME)
