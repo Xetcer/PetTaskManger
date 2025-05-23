@@ -9,6 +9,8 @@ help:
 	@echo "docker_build_image - build image with tasks_db"
 	@echo "docker_first_run_container - first start container with image"
 	@echo "docker_stop_container - stop container"
+	@echo "docker_restart_container - restart container"
+	@echo "docker_remove_container - remove container"
 
 #Переменные окружения 
 # параметры базы данных
@@ -71,9 +73,29 @@ docker_container_start:
 # Остановить запущенный контейнер
 docker_stop_container:
 	@echo Stop container...
-	@docker container stop $(CONTAINER_NAME)
+	docker container stop $(CONTAINER_NAME)
 	@if ERRORLEVEL 1 ( \
 		echo Error container stop $(CONTAINER_NAME)! \
 	) else ( \
 		echo container $(CONTAINER_NAME) stoped!\
+	)
+
+# Перезапустить созданный контейнер
+docker_restart_container:
+	@echo Starting container...
+	docker start $(CONTAINER_NAME)
+	@if ERRORLEVEL 1 ( \
+		echo Error container staring $(CONTAINER_NAME)! \
+	) else ( \
+		echo container $(CONTAINER_NAME) started!\
+	)
+
+# Удалить созданный контейнер
+docker_remove_container:
+	@echo Remove container...
+	docker container rm $(CONTAINER_NAME)
+	@if ERRORLEVEL 1 ( \
+		echo Error container remove $(CONTAINER_NAME)! \
+	) else ( \
+		echo container $(CONTAINER_NAME) removed!\
 	)
