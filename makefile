@@ -7,6 +7,8 @@ help:
 	@echo "temp - create temp directory"
 	@echo "goose_install - install goose migration tool"
 	@echo "docker_build_image - build image with tasks_db"
+	@echo "docker_first_run_container - first start container with image"
+	@echo "docker_stop_container - stop container"
 
 #Переменные окружения 
 # параметры базы данных
@@ -55,14 +57,23 @@ docker_check_env:
 	@if not exist $(ENV_FILE) (echo "Warning: The .env file does not exist at '$(ENV_FILE)'. The container may not start correctly." \
 	echo "Container will not be started due to missing .env file." exit 1)
  
- # Запускаем контейнер Docker
+# Запускаем контейнер Docker с параметрами
 docker_container_start:
 	@echo Starting Docker container...
 	@docker run -v "$(VOLUME_NAME):/var/lib/postgresql/data" -p $(PORT_BINDING) --name $(CONTAINER_NAME) --env-file "$(ENV_FILE)" -d $(DOCKER_IMAGE_NAME)
-	@if not %ERRORLEVEL%==0 (echo Error occurred while starting the container.\
+	@if not ERRORLEVEL 1 (echo Error occurred while starting the container.\
 	echo Docker logs for $(CONTAINER_NAME):\
 	docker logs $(CONTAINER_NAME)\
 	) else (\
 	echo Container '$(CONTAINER_NAME)' has been successfully started!\
 	)
 
+# Остановить запущенный контейнер
+docker_stop_container:
+	@echo Stop container...
+	@docker container stop $(CONTAINER_NAME)
+	@if ERRORLEVEL 1 ( \
+		echo Error container stop $(CONTAINER_NAME)! \
+	) else ( \
+		echo container $(CONTAINER_NAME) stoped!\
+	)
