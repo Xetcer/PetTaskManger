@@ -11,6 +11,8 @@ help:
 	@echo "docker_stop_container - stop container"
 	@echo "docker_restart_container - restart container"
 	@echo "docker_remove_container - remove container"
+	@echo "goose_up - migrate db to psql db in docker contaier"
+	@echo "goose_down - remove db from psql db in docker contaier"
 
 #Переменные окружения 
 # параметры базы данных
@@ -113,6 +115,6 @@ docker_remove_container:
 		echo container $(CONTAINER_NAME) removed!\
 	)
 
-# Подключиться к psql в контейнере
+# Подключиться к psql в контейнере для отладки
 docker_connect_psql:
 	docker exec -it $(CONTAINER_NAME) psql -U $(USER) $(DB_NAME)
