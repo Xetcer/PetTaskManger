@@ -4,6 +4,7 @@ SHELL := cmd
 .PHONY: help
 help:
 	@echo "Available targets:"
+	@echo "build_pet - build pet project"
 	@echo "temp - create temp directory"
 	@echo "goose_install - install goose migration tool"
 	@echo "docker_build_image - build image with tasks_db"
@@ -13,6 +14,12 @@ help:
 	@echo "docker_remove_container - remove container"
 	@echo "goose_up - migrate db to psql db in docker contaier"
 	@echo "goose_down - remove db from psql db in docker contaier"
+
+
+
+# Развернуть все с 0
+.PHONY: build_pet 
+build_pet: temp goose_install docker_build_image docker_first_run_container 
 
 #Переменные окружения 
 # параметры базы данных
@@ -31,15 +38,17 @@ VOLUME_NAME := E:\myWork\Study\GoLang\go\src\pettaskmngr\tmp\psql\pgdata
 PORT_BINDING := 5432:5432
 ENV_FILE := dbconfig.env
 
+
 #Переменные для psql
 USER := postgres
 PASSWORD := 5421
 DB_NAME := tasks_db
 
 # 1. Создаем директорию temp/psql/pgdata для подключения volume docker
-temp: 
-	mkdir temp\psql\pgdata\
-
+temp:
+	@echo Creating temp directory for docker volume...
+	@if not exist "$(VOLUME_NAME)" (mkdir "$(VOLUME_NAME)" && echo directory created)\
+	else (echo Directory already exists.)
 # 2. установить GOOSE
 goose_install: 
 	go install github.com/pressly/goose/v3/cmd/goose@latest
@@ -77,12 +86,12 @@ docker_check_env:
 # Запускаем контейнер Docker с параметрами
 docker_container_start:
 	@echo Starting Docker container...
-	@docker run -v "$(VOLUME_NAME):/var/lib/postgresql/data" -p $(PORT_BINDING) --name $(CONTAINER_NAME) --env-file "$(ENV_FILE)" -d $(DOCKER_IMAGE_NAME)
-	@if not ERRORLEVEL 1 (echo Error occurred while starting the container.\
-	echo Docker logs for $(CONTAINER_NAME):\
-	docker logs $(CONTAINER_NAME)\
-	) else (\
-	echo Container '$(CONTAINER_NAME)' has been successfully started!\
+	docker run -v "$(VOLUME_NAME):/var/lib/postgresql/data" -p $(PORT_BINDING) --name $(CONTAINER_NAME) --env-file "$(ENV_FILE)" -d $(DOCKER_IMAGE_NAME)
+	@if ERRORLEVEL 1 ( \
+	echo Error occurred while starting the container. \
+	docker logs $(CONTAINER_NAME); \
+	) else ( \
+	echo Container '$(CONTAINER_NAME)' has been successfully started!; \
 	)
 
 # Остановить запущенный контейнер
