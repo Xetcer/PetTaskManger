@@ -5,6 +5,7 @@ SHELL := cmd
 help:
 	@echo "Available targets:"
 	@echo "build_pet - build pet project"
+	@echo "delete_pet - goose_down, stop DB, remove contaier, clean volume directory"
 	@echo "temp - create temp directory"
 	@echo "goose_install - install goose migration tool"
 	@echo "docker_build_image - build image with tasks_db"
@@ -20,6 +21,10 @@ help:
 # Развернуть все с 0
 .PHONY: build_pet 
 build_pet: temp goose_install docker_build_image docker_first_run_container 
+
+#удалить все
+.PHONY: delete_pet
+delete_pet: goose_down docker_stop_container docker_remove_container clean
 
 #Переменные окружения 
 # параметры базы данных
@@ -49,6 +54,9 @@ temp:
 	@echo Creating temp directory for docker volume...
 	@if not exist "$(VOLUME_NAME)" (mkdir "$(VOLUME_NAME)" && echo directory created)\
 	else (echo Directory already exists.)
+clean:
+	@echo Removing temp directory $(VOLUME_NAME)...
+	@if exist "$(VOLUME_NAME)" (rmdir /s /q "$(VOLUME_NAME)" && echo directory removed)
 # 2. установить GOOSE
 goose_install: 
 	go install github.com/pressly/goose/v3/cmd/goose@latest
